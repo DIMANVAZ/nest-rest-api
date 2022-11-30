@@ -1,38 +1,37 @@
 /* eslint-disable*/
 import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
 import { CreateProductDto } from "./dto/create-product.dto";
+import { UpdateProductDto } from "./dto/update-product.dto";
+import { ProductsService } from "./products.service";
 
 @Controller('products') // будет доступен по /products/
 export class ProductsController {
 
-  @Get()
-  getAll(): string {
-    return 'Get All';
+  constructor(private readonly productsService: ProductsService) {
   }
 
-  /*  громоздкий способ
-  @Get(':id')
-  getOne(@Param() params): string {
-    return `This is one: ${params.id}`
-  }                                   */
+  @Get()
+  getAll(): Array<any> {
+    return this.productsService.getAll();
+  }
 
   @Get(':id')
   getOne(@Param('id') id: string): string {
-    return `This is one: ${id}`;
+    return this.productsService.getById(id);
   }
 
   @Post()
-  create(@Body() body:CreateProductDto){
-    return `Created new product:\n Title: ${body.title}\n Price: ${body.price}\n`
+  create(@Body() body:CreateProductDto): void{
+    return this.productsService.create(body);
   }
 
-  @Put()
-  update(){
-
+  @Put(':id')
+  update(@Body() body:UpdateProductDto, @Param('id') id: string){
+    return `Updated product:\n id: ${id} ${body.title} ${body.price}\n`;
   }
 
-  @Delete()
-  remove(){
-
+  @Delete(':id')
+  remove(@Param('id') id: string){
+    return `Deleted product:\n id: ${id}`;
   }
 }
